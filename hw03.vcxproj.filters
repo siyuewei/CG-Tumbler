@@ -121,6 +121,15 @@
     <None Include="shader\tumbler.vs">
       <Filter>资源文件\shader</Filter>
     </None>
+    <None Include="shader\ball.fs">
+      <Filter>资源文件\shader</Filter>
+    </None>
+    <None Include="shader\ball.gs">
+      <Filter>资源文件\shader</Filter>
+    </None>
+    <None Include="shader\ball.vs">
+      <Filter>资源文件\shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\wood.jpg">

@@ -60,6 +60,7 @@ return -1;
     Shader wallShader("shader/wall.vs", "shader/wall.fs");
     Shader lightShader("shader/light.vs", "shader/light.fs");
     Shader tumblerShader("shader/tumbler.vs", "shader/tumbler.fs");
+    Shader ballShader("shader/ball.vs", "shader/ball.fs");
 
     Scene scene;
 
@@ -74,6 +75,7 @@ return -1;
     wallShader.bindUniformBlock("Matrices", 0);
     lightShader.bindUniformBlock("Matrices", 0);
     tumblerShader.bindUniformBlock("Matrices", 0);
+    ballShader.bindUniformBlock("Matrices", 0);
         
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -114,6 +116,9 @@ return -1;
 
         tumblerShader.use();
         scene.DrawTumblers(tumblerShader);
+
+        ballShader.use();
+        scene.DrawBalls(ballShader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

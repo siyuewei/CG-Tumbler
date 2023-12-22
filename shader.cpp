@@ -183,6 +183,41 @@ void Shader::setFloat4Array(const std::string& name, unsigned count, float* valu
     }
 }
 
+void Shader::setFloat3Array(const std::string& name, unsigned count, float* value) const
+{
+    GLint location = glGetUniformLocation(ID, name.c_str());
+	if (location != -1) {
+		glUniform3fv(location, count, value);
+	}
+	else {
+		std::cout << "Fail to find uniform " << name << std::endl;
+	}
+}
+
+void Shader::setFloat3Array(const std::string& name, unsigned count, const glm::vec3* value) const
+{
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform3fv(location, count, glm::value_ptr(value[0]));
+    }
+    else {
+        std::cout << "Fail to find uniform " << name << std::endl;
+    }
+}
+
+
+void Shader::setBoolArray(const std::string& name, unsigned count, const bool* value) const
+{
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniform1iv(location, count, reinterpret_cast<const int*>(value));
+    }
+    else {
+        std::cout << "Fail to find uniform " << name << std::endl;
+    }
+}
+
+
 void Shader::setMatrix4fv(const std::string& name, unsigned count, glm::mat4 value) const
 {
     GLint location = glGetUniformLocation(ID, name.c_str());

@@ -159,6 +159,9 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\ball.fs" />
+    <None Include="shader\ball.gs" />
+    <None Include="shader\ball.vs" />
     <None Include="shader\light.fs" />
     <None Include="shader\light.vs" />
     <None Include="shader\tumbler.fs" />

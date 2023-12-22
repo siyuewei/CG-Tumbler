@@ -23,6 +23,7 @@ public:
     void use();
     // utility uniform functions
     void setBool(const std::string& name, bool value) const;
+    void setBoolArray(const std::string& name, unsigned count, const bool* value) const;
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;
     void setFloatVec3(const std::string& name,const glm::vec3 &value) const;
@@ -31,6 +32,8 @@ public:
     void setFloatVec4(const std::string& name, float x, float y, float z, float w) const;
     void setFloat1Array(const std::string& name, unsigned count, float* value) const;
     void setFloat4Array(const std::string& name, unsigned count, float* value) const;
+    void setFloat3Array(const std::string& name, unsigned count, float* value) const;
+    void setFloat3Array(const std::string& name, unsigned count, const glm::vec3* value) const;
     void setMatrix4fv(const std::string& name, unsigned count, glm::mat4 value) const;
     void setMatrix4fArray(const std::string& name, unsigned count, const glm::mat4* value) const;
 
