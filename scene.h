@@ -1,10 +1,10 @@
+
 #pragma once
 
 #include <vector>
 #include "wall.h"
 #include"light.h"
-#include "model.h"
-
+#include "tumbler.h"
 #include "utils.h"
 
 class Scene
@@ -12,8 +12,8 @@ class Scene
 private:
 	std::vector<Wall> walls;
 	Light light;
-	Model tumbler;
 
+	std::vector<Tumbler> tumblers;
 	unsigned int num_of_tumbler;
 	std::vector<glm::mat4> tumbler_model_matrices;
 

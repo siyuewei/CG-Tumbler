@@ -193,6 +193,17 @@ void Shader::setMatrix4fv(const std::string& name, unsigned count, glm::mat4 val
         std::cout << "Fail to find uniform " << name << std::endl;
     }
 }
+void Shader::setMatrix4fArray(const std::string& name, unsigned count, const glm::mat4* value) const
+{
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+        glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(value[0]));
+    }
+    else {
+        std::cout << "Fail to find uniform " << name << std::endl;
+    }
+}
+
 
 void Shader::bindUniformBlock(const std::string& name, unsigned int bind_point)
 {

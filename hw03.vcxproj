@@ -139,6 +139,7 @@
     <ClInclude Include="scene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="tumbler.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="wall.h" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClCompile Include="model.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="tumbler.cpp" />
     <ClCompile Include="utils.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>

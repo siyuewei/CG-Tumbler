@@ -83,50 +83,31 @@ void Scene::setupLight()
 
 void Scene::setupTumbler()
 {
-	tumbler = Model("model/tumbler/tumbler.obj");
+	//tumbler = Model("model/tumbler/tumbler.obj");
 	num_of_tumbler = 5;
 	float scale_factor = 2.5f;  // 可以根据需要调整缩放因子
 
-	//set tumbler model matrices
-	tumbler_model_matrices.clear();
-	float y_move = -1.0 - tumbler.box.min_y * scale_factor;
-	tumbler_model_matrices.clear();
-	tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, y_move, 0.0f)), glm::vec3(scale_factor)));
-	tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, y_move, 0.5f)), glm::vec3(scale_factor)));
-	tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, y_move, -0.45f)), glm::vec3(scale_factor)));
-	tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, y_move, 0.5f)), glm::vec3(scale_factor)));
-	tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, y_move, -0.4f)), glm::vec3(scale_factor)));
-
-	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, num_of_tumbler * sizeof(glm::mat4), &tumbler_model_matrices[0], GL_STATIC_DRAW);
-
-	// set transformation matrices as an instance vertex attribute (with divisor 1)
-	// note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
-	// normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
-	// -----------------------------------------------------------------------------------------------------------------------------------
-	for (unsigned int i = 0; i < tumbler.meshes.size(); i++)
+	////set tumbler model matrices
+	//tumbler_model_matrices.clear();
+	//tumbler_model_matrices.clear();
+	//tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, y_move, 0.0f)), glm::vec3(scale_factor)));
+	//tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, y_move, 0.5f)), glm::vec3(scale_factor)));
+	//tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(1.2f, y_move, -0.45f)), glm::vec3(scale_factor)));
+	//tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, y_move, 0.5f)), glm::vec3(scale_factor)));
+	//tumbler_model_matrices.push_back(glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, y_move, -0.4f)), glm::vec3(scale_factor)));
+	for(unsigned int i = 0; i < num_of_tumbler; i++)
 	{
-		unsigned int VAO = tumbler.meshes[i].VAO;
-		glBindVertexArray(VAO);
-		// set attribute pointers for matrix (4 times vec4)
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
-		glEnableVertexAttribArray(6);
-		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
-
-		glVertexAttribDivisor(3, 1);
-		glVertexAttribDivisor(4, 1);
-		glVertexAttribDivisor(5, 1);
-		glVertexAttribDivisor(6, 1);
-
-		glBindVertexArray(0);
+		Tumbler tumbler = Tumbler();
+		tumblers.push_back(tumbler);
+		tumblers[i].set_scale(scale_factor);
 	}
+	float y_move = ( - 1.0 - tumblers[0].model.box.min_y * scale_factor)/scale_factor;
+
+	tumblers[0].set_position(glm::vec3(0.0f / scale_factor, y_move, 0.0f / scale_factor));
+	tumblers[1].set_position(glm::vec3(1.0f / scale_factor, y_move, 0.5f / scale_factor));
+	tumblers[2].set_position(glm::vec3(1.2f / scale_factor, y_move, -0.45f / scale_factor));
+	tumblers[3].set_position(glm::vec3(-1.0f / scale_factor, y_move, 0.5f / scale_factor));
+	tumblers[4].set_position(glm::vec3(-1.0f / scale_factor, y_move, -0.4f / scale_factor));
 }
 
 Scene::Scene()
@@ -151,20 +132,25 @@ void Scene::DrawLight(Shader& shader)
 void Scene::DrawTumblers(Shader& shader)
 {
 	shader.use();
+	tumbler_model_matrices.clear();
+	for (unsigned int i = 0; i < num_of_tumbler; i++)
+	{
+		tumbler_model_matrices.push_back(tumblers[i].get_model_matrix());
+	}
+	shader.setMatrix4fArray("modelMatrixs", num_of_tumbler, tumbler_model_matrices.data());
 
-
-	for (unsigned int i = 0; i < tumbler.meshes.size(); i++)
+	for (unsigned int i = 0; i < tumblers[0].model.meshes.size(); i++)
 	{
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
 		unsigned int normalNr = 1;
 		unsigned int heightNr = 1;
-		for (unsigned int j = 0; j < tumbler.meshes[i].textures.size(); j++)
+		for (unsigned int j = 0; j < tumblers[0].model.meshes[i].textures.size(); j++)
 		{
 			glActiveTexture(GL_TEXTURE0 + j); // active proper texture unit before binding
 			// retrieve texture number (the N in diffuse_textureN)
 			string number;
-			string name = tumbler.meshes[i].textures[j].type;
+			string name = tumblers[0].model.meshes[i].textures[j].type;
 			if (name == "texture_diffuse")
 				number = std::to_string(diffuseNr++);
 			else if (name == "texture_specular")
@@ -177,11 +163,12 @@ void Scene::DrawTumblers(Shader& shader)
 			// now set the sampler to the correct texture unit
 			glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), j);
 			// and finally bind the texture
-			glBindTexture(GL_TEXTURE_2D, tumbler.meshes[i].textures[j].id);
+			glBindTexture(GL_TEXTURE_2D, tumblers[0].model.meshes[i].textures[j].id);
 		}
 
-		glBindVertexArray(tumbler.meshes[i].VAO);
-		glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(tumbler.meshes[i].indices.size()), GL_UNSIGNED_INT, 0, num_of_tumbler);
+		glBindVertexArray(tumblers[0].model.meshes[i].VAO);
+		glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(tumblers[0].model.meshes[i].indices.size()), GL_UNSIGNED_INT, 0, num_of_tumbler);
 		glBindVertexArray(0);
 	}
 }
+
