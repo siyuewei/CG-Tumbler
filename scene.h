@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <vector>
@@ -34,5 +33,11 @@ public:
 	void DrawLight(Shader& shader);
 	void DrawTumblers(Shader& shader);
 	void DrawBalls(Shader& shader);
+
+	void update(float deltatime);
+	void processMouseMovement(glm::vec3 mouse_position,bool is_press);
+
+	void check_collision();
+	void check_ball_wall_collision();
 };
 

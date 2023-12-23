@@ -1,7 +1,2 @@
-﻿  main.cpp
-  scene.cpp
-E:\code\OpenGL\hw03\scene.cpp(181,15): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
-  wall.cpp
-E:\code\OpenGL\hw03\wall.cpp(59,48): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
-  正在生成代码...
+﻿  tumbler.cpp
   hw03.vcxproj -> E:\code\OpenGL\hw03\x64\Debug\hw03.exe

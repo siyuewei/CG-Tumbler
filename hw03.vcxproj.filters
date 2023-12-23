@@ -60,6 +60,9 @@
     <ClInclude Include="tumbler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="main_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp">
@@ -99,6 +102,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tumbler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="main_helper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

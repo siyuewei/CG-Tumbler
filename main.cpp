@@ -8,13 +8,12 @@
 #include "shader.h"
 #include "Camera.h"
 #include "utils.h"
+#include "main_helper.h"
 #include "model.h"
 #include "scene.h"
-
 #include <iostream>
 #include <vector>
 #include <map>
-
 
 
 int main() {
@@ -43,7 +42,7 @@ return -1;
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -62,7 +61,7 @@ return -1;
     Shader tumblerShader("shader/tumbler.vs", "shader/tumbler.fs");
     Shader ballShader("shader/ball.vs", "shader/ball.fs");
 
-    Scene scene;
+    scene = new Scene();
 
     unsigned int uboMatrices;
     glGenBuffers(1, &uboMatrices);
@@ -109,19 +108,21 @@ return -1;
 
 
         wallShader.use();
-        scene.DrawWalls(wallShader);
+        scene->DrawWalls(wallShader);
 
         lightShader.use();
-        scene.DrawLight(lightShader);
+        scene->DrawLight(lightShader);
 
         tumblerShader.use();
-        scene.DrawTumblers(tumblerShader);
+        scene->DrawTumblers(tumblerShader);
 
-        ballShader.use();
-        scene.DrawBalls(ballShader);
+        //ballShader.use();
+        //scene->DrawBalls(ballShader);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
+        scene->update(deltaTime);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -130,5 +131,4 @@ return -1;
     glfwTerminate();
 	return 0;
 }
-
 

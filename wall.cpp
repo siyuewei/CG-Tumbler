@@ -1,22 +1,26 @@
 #include "wall.h"
 
-
-
-Wall::Wall(std::vector<float> position, glm::vec3 color)
+Wall::Wall(std::vector<float> position, glm::vec3 normal,glm::vec3 color)
 {
 	this->position = position;
 	this->color = color;
 	this->texture_id = -1;
 	this->tex_coords = std::vector<float>(0);
+	this->normal = normal;
+	this->model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(1.7, 1.0, 1.0));
 	setup();
 }
 
-Wall::Wall(std::vector<float> position, std::vector<float> tex_coords, unsigned int texture_id)
+Wall::Wall(std::vector<float> position, glm::vec3 normal, std::vector<float> tex_coords, unsigned int texture_id)
 {
 	this->position = position;	
 	this->tex_coords = tex_coords;
 	this->texture_id = texture_id;
 	this->color = glm::vec3(1.0f, 1.0f, 1.0f);
+	this->normal = normal;
+	this->model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(1.7, 1.0, 1.0));
 	setup();
 }
 
@@ -42,8 +46,6 @@ void Wall::setup()
 void Wall::Draw(Shader& shader)
 {
 	shader.use();
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(1.7,1.0,1.0));
 	shader.setMatrix4fv("model",1, model);
 	glBindVertexArray(VAO);
 	if (texture_id != -1) {

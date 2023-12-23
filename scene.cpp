@@ -13,7 +13,8 @@ void Scene::setupWalls()
 		-1.0f, -1.0f, -1.0f, // bottom-left
 		-1.0f, 1.0f, -1.0f // top-left
 	};
-	Wall back_wall(position, glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+	Wall back_wall(position,normal, glm::vec3(0.0f, 0.0f, 1.0f));
 
 	//left wall : green
 	position = {
@@ -24,7 +25,8 @@ void Scene::setupWalls()
 		-1.0f, -1.0f, 1.0f, // bottom-left
 		-1.0f, 1.0f, 1.0f // top-left
 	};
-	Wall left_wall(position, glm::vec3(0.0f, 1.0f, 0.0f));
+	normal = glm::vec3(1.0f, 0.0f, 0.0f);
+	Wall left_wall(position, normal,glm::vec3(0.0f, 1.0f, 0.0f));
 
 	//right wall : yellow
 	position = {
@@ -35,7 +37,8 @@ void Scene::setupWalls()
 		1.0f, -1.0f, -1.0f, // bottom-left
 		1.0f, 1.0f, -1.0f // top-left
 	};
-	Wall right_wall(position, glm::vec3(1.0f, 1.0f, 0.0f));
+	normal = glm::vec3(-1.0f, 0.0f, 0.0f);
+	Wall right_wall(position, normal, glm::vec3(1.0f, 1.0f, 0.0f));
 
 	//floor : 木纹地板
 	position = {
@@ -54,8 +57,9 @@ void Scene::setupWalls()
 		0.0f, 0.0f, // bottom-left
 		0.0f, 1.0f // top-left
 	};
+	normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	unsigned int texture_id = loadTexture("texture/wood.jpg");
-	Wall floor(position, tex_coords, texture_id);
+	Wall floor(position, normal, tex_coords, texture_id);
 
 	//ceiling : 灰白色
 	position = {
@@ -66,7 +70,8 @@ void Scene::setupWalls()
 		-1.0f, 1.0f, 1.0f, // bottom-left
 		-1.0f, 1.0f, -1.0f // top-left
 	};
-	Wall ceiling(position, glm::vec3(0.5f, 0.5f, 0.5f));
+	normal = glm::vec3(0.0f, -1.0f, 0.0f);
+	Wall ceiling(position, normal, glm::vec3(0.5f, 0.5f, 0.5f));
 
 	walls.push_back(back_wall);
 	walls.push_back(left_wall);
@@ -84,7 +89,7 @@ void Scene::setupLight()
 void Scene::setupBalls()
 {
 	num_of_ball = 30;
-	float radius = 0.1f;
+	float radius = 0.03f;
 	for(unsigned int i = 0; i < num_of_ball; i++)
 	{
 		//生成随机位置(三个轴范围是(-1.7f + radius ,1.7f - radius),(-1.0f + radius,1.0f - radius),(-1.0f + radius,1.0f - radius))
@@ -93,7 +98,7 @@ void Scene::setupBalls()
 		float z = (float)rand() / RAND_MAX * 2.0f - 1.0f + radius;
 		glm::vec3 position = glm::vec3(x, y, z);
 
-		Ball ball = Ball(position);
+		Ball ball = Ball(position,radius);
 		balls.push_back(ball);
 	}
 
@@ -178,13 +183,19 @@ void Scene::setupTumblers()
 		tumblers.push_back(tumbler);
 		tumblers[i].set_scale(scale_factor);
 	}
-	float y_move = ( - 1.0 - tumblers[0].model.box.min_y * scale_factor)/scale_factor;
 
-	tumblers[0].set_position(glm::vec3(0.0f / scale_factor, y_move, 0.0f / scale_factor));
-	tumblers[1].set_position(glm::vec3(1.0f / scale_factor, y_move, 0.5f / scale_factor));
-	tumblers[2].set_position(glm::vec3(1.2f / scale_factor, y_move, -0.45f / scale_factor));
-	tumblers[3].set_position(glm::vec3(-1.0f / scale_factor, y_move, 0.5f / scale_factor));
-	tumblers[4].set_position(glm::vec3(-1.0f / scale_factor, y_move, -0.4f / scale_factor));
+	//for (unsigned int i = 0; i < num_of_tumbler; ++i) {
+	//	std::cout << "tumbler " << i << " position : " << tumblers[i].position.x << " " << tumblers[i].position.y << " " << tumblers[i].position.z << std::endl;
+	//}
+
+	float y_move = - 1.0 - tumblers[0].model.box.min_y * scale_factor;
+
+	tumblers[0].set_position(glm::vec3(0.0f , y_move, 0.0f ));
+	tumblers[1].set_position(glm::vec3(1.0f, y_move, 0.5f ));
+	tumblers[2].set_position(glm::vec3(1.2f , y_move, -0.45f ));
+	tumblers[3].set_position(glm::vec3(-1.0f , y_move, 0.5f ));
+	tumblers[4].set_position(glm::vec3(-1.0f , y_move, -0.4f ));
+
 }
 
 Scene::Scene()
@@ -294,5 +305,86 @@ void Scene::DrawBalls(Shader& shader)
 	glBindVertexArray(ball_VAO);
 	glDrawElementsInstanced(GL_TRIANGLES, X_SEGMENTS * Y_SEGMENTS * 6, GL_UNSIGNED_INT, 0, num_of_ball);
 	glBindVertexArray(0);
+}
+
+void Scene::update(float deltatime)
+{
+	//check_collision();
+	for (unsigned int i = 0; i < num_of_tumbler; ++i) {
+		tumblers[i].update(deltatime);
+	}
+	for (unsigned int i = 0; i < num_of_ball; ++i) {
+		balls[i].update(deltatime);
+	}
+}
+
+void Scene::processMouseMovement(glm::vec3 mouse_position, bool is_press)
+{
+	//std::cout << "mouse_position : " << mouse_position.x<< " " << mouse_position.y << " " << mouse_position.z << std::endl;
+	////cout tumbler的位置
+	//for (unsigned int i = 0; i < num_of_tumbler; ++i) {
+	//	glm::mat4 model = tumblers[i].get_model_matrix();
+	//	glm::vec3 position = glm::vec3(model * glm::vec4(0.0,0.0,0.0, 1.0));
+	//	std::cout << "tumbler " << i << " position : " << position.x << " " << position.y << " " << position.z << std::endl;
+	//}
+		
+	for (unsigned int i = 0; i < num_of_tumbler; ++i) {
+		// 将鼠标坐标投影到模型坐标空间
+		glm::mat4 modelMatrix = tumblers[i].get_model_matrix();
+		glm::vec4 modelCoords = glm::inverse(modelMatrix) * glm::vec4(mouse_position, 1.0f);
+
+		if (modelCoords.x >= tumblers[i].model.box.min_x && modelCoords.x <= tumblers[i].model.box.max_x &&
+			modelCoords.y >= tumblers[i].model.box.min_y && modelCoords.y <= tumblers[i].model.box.max_y &&
+			modelCoords.z >= tumblers[i].model.box.min_z && modelCoords.z <= tumblers[i].model.box.max_z) {
+			//std::cout << "tumbler " << i << " is selected" << std::endl;
+			if(is_press)
+				tumblers[i].handle_mouse_move(modelCoords, true);
+			else 
+				tumblers[i].handle_mouse_move(modelCoords, false);
+		}
+		else {
+			tumblers[i].handle_mouse_move(modelCoords, false);
+		}
+
+	}
+
+
+}
+
+void Scene::check_collision()
+{
+	check_ball_wall_collision();
+}
+
+void Scene::check_ball_wall_collision()
+{
+	for (unsigned int i = 0; i < num_of_ball; ++i) {
+		glm::vec3 position = balls[i].position;
+		float radius = balls[i].radius;
+		//检查是否与墙面碰撞
+		for (unsigned int j = 0; j < walls.size(); ++j) {
+			glm::vec3 vertex1;
+			vertex1.x = walls[j].position[0];
+			vertex1.y = walls[j].position[1];
+			vertex1.z = walls[j].position[2];
+			vertex1 = glm::vec3(walls[j].model * glm::vec4(vertex1, 1.0f));
+
+			glm::vec3 normal = walls[j].normal;
+			float distance = glm::dot(normal, position - vertex1);
+			if (distance < radius) {
+				//std::cout << "ball " << i << " collide with wall " << j << std::endl;
+				glm::vec3 velocity = balls[i].velocity;
+				glm::vec3 new_velocity = velocity - 2.0f * glm::dot(velocity, normal) * normal;
+				balls[i].velocity = new_velocity;
+				if (walls[j].texture_id == -1) {
+					balls[i].texture_id = -1;
+					balls[i].color = walls[j].color;
+				}
+				else {
+					balls[i].texture_id = walls[j].texture_id;
+				}
+			}
+		}
+	}
 }
 
