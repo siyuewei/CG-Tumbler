@@ -106,6 +106,16 @@ void Shader::setInt(const std::string& name, int value) const
         std::cout << "Fail to find uniform " << name << std::endl;
     }
 }
+void Shader::setUnsignedIntArray(const std::string& name, unsigned count, const unsigned* value) const
+{
+    GLint location = glGetUniformLocation(ID, name.c_str());
+    if (location != -1) {
+		glUniform1uiv(location, count, value);
+	}
+    else {
+		std::cout << "Fail to find uniform " << name << std::endl;
+	}
+}
 void Shader::setFloat(const std::string& name, float value) const
 {
     GLint location = glGetUniformLocation(ID, name.c_str());

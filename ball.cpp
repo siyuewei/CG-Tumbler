@@ -7,7 +7,7 @@ Ball::Ball(glm::vec3 position, float radius)
 	this->color = glm::vec3(1.0f, 1.0f, 1.0f);
 	this->texture_id = -1;
 	this->radius = radius;
-	this->velocity = glm::vec3(0.5f, 0.0f, -0.5f);
+	this->velocity = glm::vec3(0.5f, 0.0f, 0.0f);
 }
 
 void Ball::set_position(glm::vec3 position)

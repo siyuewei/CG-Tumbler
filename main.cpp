@@ -116,8 +116,10 @@ return -1;
         tumblerShader.use();
         scene->DrawTumblers(tumblerShader);
 
-        //ballShader.use();
-        //scene->DrawBalls(ballShader);
+        
+		ballShader.use();
+		scene->DrawBalls(ballShader);
+		
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

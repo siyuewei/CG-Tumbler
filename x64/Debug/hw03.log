@@ -1,2 +1,3 @@
-﻿  tumbler.cpp
+﻿  scene.cpp
+E:\code\OpenGL\hw03\scene.cpp(221,15): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
   hw03.vcxproj -> E:\code\OpenGL\hw03\x64\Debug\hw03.exe

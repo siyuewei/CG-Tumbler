@@ -1,8 +1,8 @@
 #include "main_helper.h"
 
 
-const unsigned int SCR_WIDTH = 1400;
-const unsigned int SCR_HEIGHT = 800;
+unsigned int SCR_WIDTH = 1400;
+unsigned int SCR_HEIGHT = 800;
 
 // camera
 glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.5f);
@@ -19,6 +19,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 Scene *scene = nullptr;
+
+bool isShowBalls = false;
 
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
@@ -38,6 +40,8 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyBoard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         camera.ProcessKeyBoard(DOWN, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        scene->setupBalls();
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -47,6 +51,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    SCR_WIDTH = width;
+    SCR_HEIGHT = height;
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -60,10 +66,27 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
+
+
     if (scene == nullptr)
         return;
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset, false);
 
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
@@ -98,8 +121,23 @@ glm::vec3 getWorldPosForm2D(int x, int y, glm::mat4 pro, glm::mat4 view)
     // 反投影屏幕坐标到世界坐标
     glm::vec3 winCoords(win_x, win_y, win_z);
     glm::vec4 viewport = glm::vec4(0, 0, SCR_WIDTH, SCR_HEIGHT);
+    //std::cout << "mouse pos: " << win_x << " " << win_y << " " << win_z << std::endl;
 
     glm::vec3 obj = glm::unProject(winCoords, view, pro, viewport);
 
     return obj;
+}
+
+void getAllDepth()
+{
+    GLfloat* depthData = new GLfloat[SCR_WIDTH * SCR_HEIGHT];
+    glReadPixels(0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_COMPONENT, GL_FLOAT, depthData);
+
+    // 打印深度信息
+    for (int i = 0; i < SCR_WIDTH; ++i) {
+        for (int j = 0; j < SCR_HEIGHT; ++j) {
+            std::cout << depthData[i * SCR_WIDTH + j] << " ";
+        }
+        std::cout << std::endl;
+    }
 }

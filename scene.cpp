@@ -58,8 +58,8 @@ void Scene::setupWalls()
 		0.0f, 1.0f // top-left
 	};
 	normal = glm::vec3(0.0f, 1.0f, 0.0f);
-	unsigned int texture_id = loadTexture("texture/wood.jpg");
-	Wall floor(position, normal, tex_coords, texture_id);
+	wall_texture_id = loadTexture("texture/wood.jpg");
+	Wall floor(position, normal, tex_coords, wall_texture_id);
 
 	//ceiling : 灰白色
 	position = {
@@ -73,11 +73,24 @@ void Scene::setupWalls()
 	normal = glm::vec3(0.0f, -1.0f, 0.0f);
 	Wall ceiling(position, normal, glm::vec3(0.5f, 0.5f, 0.5f));
 
+	float z_offset = 0.2f;
+	position = {
+		-1.0f, -1.0f, 1.0f - z_offset, // bottom-left
+		1.0f, 1.0f, 1.0f - z_offset, // top-right
+		1.0f, -1.0f, 1.0f - z_offset, // bottom-right         
+		1.0f, 1.0f, 1.0f - z_offset, // top-right
+		-1.0f, -1.0f, 1.0f - z_offset, // bottom-left
+		-1.0f, 1.0f, 1.0f - z_offset // top-left
+	};
+	normal = glm::vec3(0.0f, 0.0f, -1.0f);
+	Wall front_wall(position, normal, glm::vec3(1.0f, 0.0f, 0.0f));
+
 	walls.push_back(back_wall);
 	walls.push_back(left_wall);
 	walls.push_back(right_wall);
 	walls.push_back(floor);
 	walls.push_back(ceiling);
+	walls.push_back(front_wall);
 
 }
 
@@ -89,7 +102,10 @@ void Scene::setupLight()
 void Scene::setupBalls()
 {
 	num_of_ball = 30;
-	float radius = 0.03f;
+	float radius = 0.02f;
+	//生成ball纹理
+	ball_texture_id = loadTexture("texture/ball.jpg");
+
 	for(unsigned int i = 0; i < num_of_ball; i++)
 	{
 		//生成随机位置(三个轴范围是(-1.7f + radius ,1.7f - radius),(-1.0f + radius,1.0f - radius),(-1.0f + radius,1.0f - radius))
@@ -99,6 +115,16 @@ void Scene::setupBalls()
 		glm::vec3 position = glm::vec3(x, y, z);
 
 		Ball ball = Ball(position,radius);
+		ball.texture_id = ball_texture_id;
+		ball.color = glm::vec3(1.0f, 1.0f, 1.0f);
+
+
+		// 设置随机速度
+		float xVel = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.3f - 0.15f;  // 范围从-0.15到0.15
+		float yVel = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.3f - 0.15f;
+		float zVel = static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.3f - 0.15f;
+		ball.velocity = glm::vec3(xVel, yVel, zVel);
+
 		balls.push_back(ball);
 	}
 
@@ -171,6 +197,10 @@ void Scene::setupBalls()
 	//解绑VAO和VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+
+
+	
 }
 
 void Scene::setupTumblers()
@@ -203,12 +233,13 @@ Scene::Scene()
 	setupWalls();
 	setupLight();
 	setupTumblers();
-	setupBalls();
+	//setupBalls();
+	num_of_ball = 0;
 }
 
 void Scene::DrawWalls(Shader& shader)
 {
-	for (int i = 0; i < walls.size(); i++) {
+	for (int i = 0; i < walls.size() - 1; i++) {
 		walls[i].Draw(shader);
 	}
 }
@@ -263,6 +294,8 @@ void Scene::DrawTumblers(Shader& shader)
 
 void Scene::DrawBalls(Shader& shader)
 {
+	if(num_of_ball == 0)
+		return;
 	shader.use();
 
 	ball_model_matrices.clear();
@@ -276,31 +309,47 @@ void Scene::DrawBalls(Shader& shader)
 	//ball color & texture
 
 	std::vector<glm::vec3> ball_colors;
-	std::vector<int> use_textures;  // 修改为 std::vector<int>
-	std::vector<unsigned int> textures;
-	bool has_texture = false;
-	unsigned int texture_id = 0;
+	//std::vector<int> use_textures;  // 修改为 std::vector<int>
+	std::vector<unsigned int> ball_textures;
+	//std::vector<unsigned int> textures;
+	//bool has_texture = false;
+	//unsigned int texture_id = 0;
 	for(unsigned int i = 0; i < num_of_ball; i++)
 	{
 		ball_colors.push_back(balls[i].color);
-		if (balls[i].texture_id == -1) {
-			use_textures.push_back(false);
+		//if (balls[i].texture_id == -1) {
+		//	use_textures.push_back(false);
+		//}
+		//else {
+		//	has_texture = true;
+		//	texture_id = balls[i].texture_id;
+		//	use_textures.push_back(true);
+		//}
+		if (balls[i].texture_id == ball_texture_id)
+		{
+			ball_textures.push_back(0);
 		}
-		else {
-			has_texture = true;
-			texture_id = balls[i].texture_id;
-			use_textures.push_back(true);
+		else
+		{
+			ball_textures.push_back(1);
 		}
 	}
 	shader.setFloat3Array("ballColors", num_of_ball, ball_colors.data());
-	shader.setBoolArray("useTexture", num_of_ball, reinterpret_cast<const bool*>(&use_textures[0]));
+	//shader.setBoolArray("useTexture", num_of_ball, reinterpret_cast<const bool*>(&use_textures[0]));
+	shader.setUnsignedIntArray("ballTextures", num_of_ball, ball_textures.data());
 
-	if(has_texture)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_id);
-		shader.setInt("texture1", 0);
-	}
+	//if(has_texture)
+	//{
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texture_id);
+		//shader.setInt("texture1", 0);
+	//}
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, ball_texture_id);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, wall_texture_id);
+	shader.setInt("texture1", 0);
+	shader.setInt("texture2", 1);
 
 	glBindVertexArray(ball_VAO);
 	glDrawElementsInstanced(GL_TRIANGLES, X_SEGMENTS * Y_SEGMENTS * 6, GL_UNSIGNED_INT, 0, num_of_ball);
@@ -309,7 +358,7 @@ void Scene::DrawBalls(Shader& shader)
 
 void Scene::update(float deltatime)
 {
-	//check_collision();
+	check_collision();
 	for (unsigned int i = 0; i < num_of_tumbler; ++i) {
 		tumblers[i].update(deltatime);
 	}
@@ -376,12 +425,22 @@ void Scene::check_ball_wall_collision()
 				glm::vec3 velocity = balls[i].velocity;
 				glm::vec3 new_velocity = velocity - 2.0f * glm::dot(velocity, normal) * normal;
 				balls[i].velocity = new_velocity;
-				if (walls[j].texture_id == -1) {
-					balls[i].texture_id = -1;
-					balls[i].color = walls[j].color;
-				}
-				else {
-					balls[i].texture_id = walls[j].texture_id;
+				if (j == 0) { balls[i].position.z = -1.0f + radius; }
+				if (j == 1) { balls[i].position.x = -1.7f + radius; }
+				if (j == 2) { balls[i].position.x = 1.7f - radius; }
+				if (j == 3) { balls[i].position.y = -1.0f + radius; }
+				if (j == 4) { balls[i].position.y = 1.0f - radius; }
+				if (j == 5) { balls[i].position.z = 1.0f - 0.2f - 2 * radius; }
+				if (j != 5) {
+					if (walls[j].texture_id == -1) {
+						balls[i].texture_id = ball_texture_id;
+						balls[i].color = walls[j].color;
+					}
+					else {
+						//std::cout << "ball " << i << " collide with floor" << std::endl;
+						balls[i].texture_id = wall_texture_id;
+						balls[i].color = glm::vec3(1.0f, 1.0f, 1.0f);
+					}
 				}
 			}
 		}

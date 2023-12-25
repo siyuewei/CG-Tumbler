@@ -20,10 +20,12 @@ private:
 	unsigned int num_of_ball;
 	std::vector<glm::mat4> ball_model_matrices;
 
+	unsigned int ball_texture_id;
+	unsigned int wall_texture_id;
+
 	void setupWalls();
 	void setupLight();
 	void setupTumblers();
-	void setupBalls();
 
 	unsigned int ball_VAO; // vertex array object
 
@@ -33,6 +35,8 @@ public:
 	void DrawLight(Shader& shader);
 	void DrawTumblers(Shader& shader);
 	void DrawBalls(Shader& shader);
+
+	void setupBalls();
 
 	void update(float deltatime);
 	void processMouseMovement(glm::vec3 mouse_position,bool is_press);
