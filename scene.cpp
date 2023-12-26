@@ -197,10 +197,6 @@ void Scene::setupBalls()
 	//Ω‚∞ÛVAO∫ÕVBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-
-
-	
 }
 
 void Scene::setupTumblers()

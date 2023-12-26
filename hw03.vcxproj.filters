@@ -22,6 +22,9 @@
     <Filter Include="资源文件\texture">
       <UniqueIdentifier>{6c9ca050-c855-4b5c-bea7-a48f461fc8d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="资源文件\shader_depth">
+      <UniqueIdentifier>{3454ba5b-deef-4cdf-a32b-1526eba4407f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -135,6 +138,24 @@
     </None>
     <None Include="shader\ball.vs">
       <Filter>资源文件\shader</Filter>
+    </None>
+    <None Include="shader_depth\ball_depth.fs">
+      <Filter>资源文件\shader_depth</Filter>
+    </None>
+    <None Include="shader_depth\ball_depth.vs">
+      <Filter>资源文件\shader_depth</Filter>
+    </None>
+    <None Include="shader_depth\tumbler_depth.fs">
+      <Filter>资源文件\shader_depth</Filter>
+    </None>
+    <None Include="shader_depth\tumbler_depth.vs">
+      <Filter>资源文件\shader_depth</Filter>
+    </None>
+    <None Include="shader_depth\wall_depth.fs">
+      <Filter>资源文件\shader_depth</Filter>
+    </None>
+    <None Include="shader_depth\wall_depth.vs">
+      <Filter>资源文件\shader_depth</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

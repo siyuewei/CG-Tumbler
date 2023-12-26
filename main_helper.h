@@ -27,7 +27,7 @@ extern float lastFrame;
 
 // lighting
 extern glm::vec3 lightPos;
-
+extern glm::vec3 lightColor;
 extern Scene *scene;
 
 extern bool isShowBalls;
@@ -40,3 +40,5 @@ void processInput(GLFWwindow* window);
 glm::vec3 getWorldPosForm2D(int x, int y, glm::mat4 pro, glm::mat4 view);
 
 void getAllDepth();
+
+void renderSceneDepth(const Shader& shader);

@@ -170,6 +170,12 @@
     <None Include="shader\tumbler.vs" />
     <None Include="shader\wall.fs" />
     <None Include="shader\wall.vs" />
+    <None Include="shader_depth\ball_depth.fs" />
+    <None Include="shader_depth\ball_depth.vs" />
+    <None Include="shader_depth\tumbler_depth.fs" />
+    <None Include="shader_depth\tumbler_depth.vs" />
+    <None Include="shader_depth\wall_depth.fs" />
+    <None Include="shader_depth\wall_depth.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="texture\wood.jpg" />

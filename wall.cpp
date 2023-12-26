@@ -26,19 +26,28 @@ Wall::Wall(std::vector<float> position, glm::vec3 normal, std::vector<float> tex
 
 void Wall::setup()
 {
+	std::vector<glm::vec3> normals;
+	for (int i = 0; i < position.size(); i += 3) {
+		normals.push_back(normal);
+	}
+
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, position.size() * sizeof(float) + tex_coords.size() * sizeof(float), NULL, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, position.size() * sizeof(float) + tex_coords.size() * sizeof(float), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, position.size() * sizeof(float) + tex_coords.size() * sizeof(float) + normals.size() * sizeof(glm::vec3), NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, position.size() * sizeof(float), &position[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glBufferSubData(GL_ARRAY_BUFFER,position.size() * sizeof(float),normals.size() * sizeof(glm::vec3), &normals[0]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(position.size() * sizeof(float)));
+	glEnableVertexAttribArray(1);
 	if (tex_coords.size() > 0) {
-		glBufferSubData(GL_ARRAY_BUFFER, position.size() * sizeof(float), tex_coords.size() * sizeof(float), &tex_coords[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(position.size() * sizeof(float)));
-		glEnableVertexAttribArray(1);
+		glBufferSubData(GL_ARRAY_BUFFER, position.size() * sizeof(float) + normals.size() * sizeof(glm::vec3), tex_coords.size() * sizeof(float), &tex_coords[0]);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(position.size() * sizeof(float) + normals.size() * sizeof(glm::vec3)));
+		glEnableVertexAttribArray(2);
 	}
 	glBindVertexArray(0);
 }

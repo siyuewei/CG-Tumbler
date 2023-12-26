@@ -18,6 +18,9 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+glm::vec3 lightPos = glm::vec3(0.0f, 0.8f, 0.0f);
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
 Scene *scene = nullptr;
 
 bool isShowBalls = false;
@@ -73,20 +76,20 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     float xpos = static_cast<float>(xposIn);
     float ypos = static_cast<float>(yposIn);
 
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
+    //if (firstMouse)
+    //{
+    //    lastX = xpos;
+    //    lastY = ypos;
+    //    firstMouse = false;
+    //}
 
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+    //float xoffset = xpos - lastX;
+    //float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
-    lastX = xpos;
-    lastY = ypos;
+    //lastX = xpos;
+    //lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset, false);
+    //camera.ProcessMouseMovement(xoffset, yoffset, false);
 
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
@@ -140,4 +143,9 @@ void getAllDepth()
         }
         std::cout << std::endl;
     }
+}
+
+void renderSceneDepth(const Shader& shader)
+{
+   
 }

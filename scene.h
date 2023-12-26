@@ -35,7 +35,6 @@ public:
 	void DrawLight(Shader& shader);
 	void DrawTumblers(Shader& shader);
 	void DrawBalls(Shader& shader);
-
 	void setupBalls();
 
 	void update(float deltatime);
